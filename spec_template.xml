@@ -1,0 +1,533 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ============================================================
+  APP SPECIFICATION TEMPLATE v1.0
+  Audience: AI Agents (also usable by human authors)
+  
+  COMPLETENESS RUBRIC
+  -------------------
+  Each section is tagged with a SCORE WEIGHT and MINIMUM DEPTH.
+  Agents must self-evaluate before finalizing a spec.
+  
+  Score weights indicate relative importance for spec quality:
+    [CRITICAL]  — Spec is invalid/ambiguous without this
+    [HIGH]      — Strongly affects implementation correctness
+    [MEDIUM]    — Affects quality and completeness
+    [LOW]       — Nice to have; fill when known
+  
+  Depth requirements (per section):
+    DEPTH:FULL       — Every sub-item needs rationale + behaviour + edge cases
+    DEPTH:DEFINED    — Behaviour must be explicit; rationale optional
+    DEPTH:ENUMERATED — List all items; brief descriptions acceptable
+    DEPTH:ABSTRACT   — Bullet list acceptable; detail deferred
+  
+  FIDELITY LEVELS (tag every feature with one):
+    fidelity="concrete"  — Fully specced; implement as written
+    fidelity="guided"    — Core behaviour defined; agent fills gaps
+    fidelity="mock"      — UI/stub only; no real logic needed
+    fidelity="deferred"  — Do not implement; reserved for future
+  
+  SELF-EVALUATION CHECKLIST (run before submitting spec):
+    [ ] All CRITICAL sections filled to required depth
+    [ ] Every feature has a fidelity attribute
+    [ ] All CRUD operations have endpoint + schema entries
+    [ ] Success criteria are measurable (not "intuitive" or "clean")
+    [ ] Acceptance criteria have pass/fail conditions
+    [ ] Rationale provided for every non-obvious decision
+    [ ] Abstract/deferred features explicitly marked
+    [ ] Implementation steps are ordered and dependency-safe
+    [ ] No placeholder text (e.g. "TBD", "TODO") in CRITICAL sections
+  ============================================================
+-->
+
+<project_specification>
+
+  <!-- ============================================================
+    SECTION: PROJECT IDENTITY
+    SCORE WEIGHT: [CRITICAL]   DEPTH: FULL
+    Required: project_name, one-paragraph overview, goals, non-goals.
+    Rationale: Agents use this to resolve ambiguity in all downstream sections.
+    Missing this = invalid spec.
+  ============================================================ -->
+  <project_name><!-- REQUIRED: Short, unique name --></project_name>
+
+  <overview>
+    <!--
+      REQUIRED. Write 2–4 sentences covering:
+        1. What the application does (user-facing outcome)
+        2. Who uses it (primary persona)
+        3. What distinguishes it (key differentiator or constraint)
+      
+      BAD:  "Build a chat app with good UX."
+      GOOD: "Build a single-tenant AI chat interface for internal engineering teams,
+             exposing Claude via a Node/Express backend with SQLite persistence.
+             Unlike claude.ai, this clone runs fully on-premise with no external auth."
+    -->
+  </overview>
+
+  <goals>
+    <!-- REQUIRED. List 3–7 specific, verifiable goals. Each goal must be falsifiable.
+         BAD:  <goal>Good performance</goal>
+         GOOD: <goal>Streaming responses begin rendering within 500ms of API call</goal>
+    -->
+    <goal></goal>
+  </goals>
+
+  <non_goals>
+    <!-- REQUIRED. Explicitly state what this spec does NOT cover.
+         Prevents scope creep and resolves ambiguity.
+         Example: <non_goal>Multi-tenant auth or user accounts are out of scope</non_goal>
+    -->
+    <non_goal></non_goal>
+  </non_goals>
+
+
+  <!-- ============================================================
+    SECTION: TECHNOLOGY STACK
+    SCORE WEIGHT: [CRITICAL]   DEPTH: DEFINED
+    Required: every runtime dependency with version or version constraint.
+    Rationale: Agents need exact packages to avoid incompatible choices.
+    Include WHY for any non-obvious choice (e.g. SSE over WebSockets).
+  ============================================================ -->
+  <technology_stack>
+    <frontend>
+      <framework><!-- e.g. React 18 with Vite 5 --></framework>
+      <styling><!-- e.g. Tailwind CSS via CDN --></styling>
+      <state_management><!-- e.g. React hooks + Context API --></state_management>
+      <routing><!-- e.g. React Router v6 --></routing>
+      <key_libraries>
+        <!-- List each lib + its role. Omit "we might use X" — only confirmed choices. -->
+        <library role=""><!-- name + version --></library>
+      </key_libraries>
+      <port><!-- Fixed port or placeholder token, e.g. {frontend_port} --></port>
+      <rationale><!-- Why this stack? Note any constraints (e.g. CDN-only, no build step) --></rationale>
+    </frontend>
+
+    <backend>
+      <runtime><!-- e.g. Node.js 20 with Express 4 --></runtime>
+      <database><!-- e.g. SQLite with better-sqlite3; or "none" --></database>
+      <external_apis>
+        <api name="" auth_method=""><!-- base URL, SDK if any --></api>
+      </external_apis>
+      <communication>
+        <!-- List each protocol and its use case -->
+        <protocol type="" use_case=""/>
+        <!-- e.g. type="SSE" use_case="streaming AI responses" -->
+        <!-- e.g. type="REST" use_case="all CRUD operations" -->
+      </communication>
+      <rationale><!-- Why these choices? e.g. SQLite because single-user; SSE because no bidirectional need --></rationale>
+    </backend>
+
+    <environment>
+      <!-- REQUIRED: Describe every env variable and secret.
+           Format: <var name="X" required="true|false" default="">description</var> -->
+      <var name="" required="true" default=""></var>
+    </environment>
+  </technology_stack>
+
+
+  <!-- ============================================================
+    SECTION: FEATURES
+    SCORE WEIGHT: [CRITICAL]   DEPTH: FULL (concrete) / DEFINED (guided) / ABSTRACT (mock/deferred)
+    
+    RULES FOR AGENTS:
+      1. Every feature MUST have a fidelity attribute (see top of file).
+      2. fidelity="concrete" features MUST include:
+           - Exact behaviour description
+           - Edge cases and error states
+           - Any sub-steps or sub-components
+      3. fidelity="guided" features MUST include:
+           - Core behaviour (what it does, not how)
+           - At least one explicit constraint or rule
+      4. fidelity="mock" features need only:
+           - Visual description (what the user sees)
+           - Note: "no real logic; static/stub UI only"
+      5. fidelity="deferred" features need only:
+           - One sentence on what it is
+           - Note: "excluded from this implementation"
+      
+      ANTI-PATTERNS (reject spec if present):
+        - Feature listed as a bullet with no fidelity tag
+        - "TBD" or "as needed" in a concrete feature
+        - Behaviour described only by UI metaphor ("a nice modal")
+  ============================================================ -->
+  <features>
+
+    <!--
+      FEATURE TEMPLATE — copy and repeat for each feature group.
+      
+      <feature_group name="[Group Name]" fidelity="concrete|guided|mock|deferred">
+        <description>What this group covers at a high level.</description>
+        
+        <feature name="[Feature Name]" fidelity="concrete|guided|mock|deferred" priority="p0|p1|p2">
+          <behaviour>
+            Precise description of what happens. Use numbered steps for flows.
+            Include: normal path, error path, edge cases.
+          </behaviour>
+          <constraints>
+            Any hard rules (limits, formats, dependencies on other features).
+          </constraints>
+          <edge_cases>
+            What happens when: empty state, network failure, invalid input, etc.
+          </edge_cases>
+          <rationale>
+            Why this feature exists / why this approach. Optional for obvious features.
+          </rationale>
+        </feature>
+        
+      </feature_group>
+    -->
+
+    <!-- === EXAMPLE (remove before finalising) ===
+    <feature_group name="Chat Interface" fidelity="concrete">
+      <description>Core message send/receive loop including streaming.</description>
+      
+      <feature name="Streaming Response" fidelity="concrete" priority="p0">
+        <behaviour>
+          1. User submits message; UI immediately appends user bubble.
+          2. POST /api/claude/chat/stream opens an SSE connection.
+          3. Tokens stream into the assistant bubble word-by-word.
+          4. A stop button appears during streaming; click cancels the SSE stream.
+          5. On stream end, finish_reason is saved to messages table.
+        </behaviour>
+        <constraints>
+          - Timeout after 60s of no tokens; show error toast.
+          - Max message length: 100,000 characters (client-side guard).
+        </constraints>
+        <edge_cases>
+          - Network drop mid-stream: show "Connection lost, retry?" inline.
+          - Empty response (finish_reason=stop, 0 tokens): show "No response received."
+        </edge_cases>
+        <rationale>SSE preferred over WebSockets — server push only, simpler proxy setup.</rationale>
+      </feature>
+      
+      <feature name="Voice Input" fidelity="mock" priority="p2">
+        <behaviour>Microphone icon visible in input bar. Clicking shows disabled tooltip: "Coming soon."</behaviour>
+        <constraints>No real audio capture or transcription logic.</constraints>
+      </feature>
+    </feature_group>
+    === END EXAMPLE === -->
+
+  </features>
+
+
+  <!-- ============================================================
+    SECTION: DATABASE SCHEMA
+    SCORE WEIGHT: [CRITICAL]   DEPTH: FULL
+    Required for every table used by a concrete or guided feature.
+    Skip tables that only serve deferred features.
+    
+    Rules:
+      - Every column must have a type and nullability.
+      - JSON columns must list their expected keys.
+      - Foreign keys must be explicit.
+      - Indexes on frequently-queried columns.
+  ============================================================ -->
+  <database_schema>
+    <!--
+      TABLE TEMPLATE:
+      
+      <table name="[table_name]">
+        <purpose>One sentence on what this table stores.</purpose>
+        <columns>
+          <col name="id"              type="INTEGER" nullable="false" pk="true"  notes="Auto-increment"/>
+          <col name="user_id"         type="INTEGER" nullable="false" fk="users.id"/>
+          <col name="content"         type="TEXT"    nullable="false"             notes="Raw message text"/>
+          <col name="metadata"        type="JSON"    nullable="true"              notes="Keys: model, tokens, finish_reason"/>
+          <col name="created_at"      type="DATETIME" nullable="false"            notes="UTC, set on insert"/>
+        </columns>
+        <indexes>
+          <index cols="user_id, created_at" reason="conversation list query"/>
+        </indexes>
+      </table>
+    -->
+  </database_schema>
+
+
+  <!-- ============================================================
+    SECTION: API ENDPOINTS
+    SCORE WEIGHT: [CRITICAL]   DEPTH: FULL
+    Required for every endpoint called by a concrete feature.
+    
+    Rules:
+      - Include method, path, auth requirement, request shape, response shape.
+      - List all error codes the client must handle.
+      - Streaming endpoints must specify their protocol (SSE/WS).
+  ============================================================ -->
+  <api_endpoints>
+    <!--
+      ENDPOINT TEMPLATE:
+      
+      <endpoint method="POST" path="/api/conversations" auth="required">
+        <description>Create a new conversation.</description>
+        <request>
+          <body>{ project_id?: number, title?: string, model: string }</body>
+        </request>
+        <response>
+          <success code="201">{ id, title, model, created_at }</success>
+          <error code="400">Missing required field: model</error>
+          <error code="401">Unauthenticated</error>
+        </response>
+      </endpoint>
+    -->
+  </api_endpoints>
+
+
+  <!-- ============================================================
+    SECTION: UI LAYOUT
+    SCORE WEIGHT: [HIGH]   DEPTH: DEFINED
+    Describe the screen structure. Agents use this to build components.
+    Be explicit about layout regions, not aesthetic opinions.
+  ============================================================ -->
+  <ui_layout>
+    <main_structure>
+      <!--
+        Describe the top-level layout: columns, panels, persistent elements.
+        Example: "Three-column layout: sidebar (240px fixed), main (flex-grow), artifact panel (400px, hidden by default)."
+        Include responsive breakpoints and how layout collapses.
+      -->
+    </main_structure>
+
+    <!--
+      REGION TEMPLATE (repeat for each named region):
+      
+      <region name="sidebar_left">
+        <contents>
+          List the UI elements in this region, top to bottom.
+          Note which are interactive and what they trigger.
+        </contents>
+        <responsive>How this region behaves on mobile/tablet.</responsive>
+      </region>
+    -->
+  </ui_layout>
+
+
+  <!-- ============================================================
+    SECTION: DESIGN SYSTEM
+    SCORE WEIGHT: [MEDIUM]   DEPTH: DEFINED
+    Provide exact tokens. Agents should not invent colors/spacing.
+    If following an existing design system, reference it by name and version.
+  ============================================================ -->
+  <design_system>
+    <reference><!-- e.g. "Custom; matches claude.ai circa 2024" or "Material 3" --></reference>
+
+    <colors>
+      <!-- Use hex values. Define light AND dark if dark mode is in scope. -->
+      <color role="primary"       light="" dark=""/>
+      <color role="background"    light="" dark=""/>
+      <color role="surface"       light="" dark=""/>
+      <color role="text_primary"  light="" dark=""/>
+      <color role="text_muted"    light="" dark=""/>
+      <color role="border"        light="" dark=""/>
+      <color role="error"         light="" dark=""/>
+    </colors>
+
+    <typography>
+      <font_family role="body"/>
+      <font_family role="mono"/>
+      <scale><!-- e.g. base: 16px; scale: 1.25 (major third) --></scale>
+    </typography>
+
+    <spacing><!-- e.g. 4px base unit; scale: 4, 8, 12, 16, 24, 32, 48 --></spacing>
+
+    <component_states>
+      <!-- For each interactive component, define: default, hover, active, focus, disabled, error -->
+      <!-- e.g. <component name="primary_button" default="" hover="" active="" focus="" disabled=""/> -->
+    </component_states>
+
+    <animations>
+      <!-- Define durations and easing. Agents should not freestyle transitions.
+           e.g. <animation name="panel_slide" duration="200ms" easing="ease-out"/> -->
+    </animations>
+  </design_system>
+
+
+  <!-- ============================================================
+    SECTION: KEY INTERACTION FLOWS
+    SCORE WEIGHT: [HIGH]   DEPTH: FULL
+    Required for any flow that crosses >2 components or has async steps.
+    Use numbered steps. Include error paths.
+    
+    Purpose: Agents use these as ground truth when wiring up components.
+    A missing flow = agent guesses = potential misimplementation.
+  ============================================================ -->
+  <key_interactions>
+    <!--
+      FLOW TEMPLATE:
+      
+      <flow name="[Flow Name]">
+        <trigger>What initiates this flow (user action / system event).</trigger>
+        <happy_path>
+          1. Step one (component: action)
+          2. Step two
+          ...
+        </happy_path>
+        <error_paths>
+          - If X fails: show Y, do Z.
+        </error_paths>
+        <postconditions>What state the system is in after successful completion.</postconditions>
+      </flow>
+    -->
+  </key_interactions>
+
+
+  <!-- ============================================================
+    SECTION: IMPLEMENTATION STEPS
+    SCORE WEIGHT: [HIGH]   DEPTH: DEFINED
+    Ordered build sequence. Each step must be independently testable.
+    Agents use this to determine build order and avoid circular deps.
+    
+    Rules:
+      - Each step should produce a runnable/testable increment.
+      - Dependencies between steps must be explicit.
+      - Steps should not mix infrastructure and UI.
+  ============================================================ -->
+  <implementation_steps>
+    <!--
+      STEP TEMPLATE:
+      
+      <step number="1">
+        <title>Setup Project Foundation and Database</title>
+        <depends_on></depends_on>  (empty if first step)
+        <tasks>
+          - Task A
+          - Task B
+        </tasks>
+        <done_when>
+          Observable condition proving this step is complete.
+          e.g. "GET /health returns 200; database file created with all tables."
+        </done_when>
+      </step>
+    -->
+  </implementation_steps>
+
+
+  <!-- ============================================================
+    SECTION: SUCCESS CRITERIA
+    SCORE WEIGHT: [CRITICAL]   DEPTH: FULL
+    
+    RULES — every criterion must be:
+      1. MEASURABLE  — contains a number, threshold, or binary pass/fail
+      2. OBSERVABLE  — can be verified without reading source code
+      3. SCOPED      — tied to a specific feature or category
+    
+    ANTI-PATTERNS:
+      ❌ "The UI looks clean and modern."
+      ❌ "Performance is good."
+      ❌ "Code is maintainable."
+      
+    GOOD PATTERNS:
+      ✅ "Streaming first token appears within 800ms of send on a local network."
+      ✅ "Conversation list renders within 200ms for up to 500 conversations."
+      ✅ "All CRUD endpoints return correct HTTP status codes for happy and error paths."
+      ✅ "Dark mode applies to 100% of UI surfaces with no white flash on toggle."
+  ============================================================ -->
+  <success_criteria>
+
+    <category name="Functionality">
+      <!--
+        <criterion feature="[feature name]" type="pass_fail|threshold">
+          [Measurable condition]
+        </criterion>
+      -->
+    </category>
+
+    <category name="Performance">
+      <!--
+        <criterion feature="" type="threshold">
+          [e.g. "p95 response time for /api/conversations GET is under 100ms with 1000 rows"]
+        </criterion>
+      -->
+    </category>
+
+    <category name="User Experience">
+      <!--
+        <criterion feature="" type="pass_fail">
+          [e.g. "Sidebar collapses correctly on viewports narrower than 768px"]
+        </criterion>
+      -->
+    </category>
+
+    <category name="Technical Quality">
+      <!--
+        <criterion feature="" type="pass_fail">
+          [e.g. "All API errors return JSON with shape { error: string, code: string }"]
+        </criterion>
+      -->
+    </category>
+
+  </success_criteria>
+
+
+  <!-- ============================================================
+    SECTION: ACCEPTANCE CRITERIA
+    SCORE WEIGHT: [HIGH]   DEPTH: FULL
+    
+    Unlike success criteria (system-level), acceptance criteria are
+    per-feature pass/fail gates. Written as Gherkin-style scenarios
+    or explicit given/when/then statements.
+    
+    Required for: all fidelity="concrete" features at priority p0 or p1.
+    Optional for: guided features; not needed for mock/deferred.
+  ============================================================ -->
+  <acceptance_criteria>
+    <!--
+      SCENARIO TEMPLATE:
+      
+      <scenario feature="[Feature Name]" id="AC-001">
+        <given>System state before action</given>
+        <when>User or system action</when>
+        <then>Expected observable outcome</then>
+        <and>Additional assertion if needed</and>
+      </scenario>
+      
+      EXAMPLE:
+      <scenario feature="Streaming Response" id="AC-003">
+        <given>An active conversation exists with 2 prior messages</given>
+        <when>User sends a new message and streaming begins</when>
+        <then>A stop-generation button appears in the input area</then>
+        <and>Clicking stop halts token emission and marks finish_reason as "cancelled"</and>
+      </scenario>
+    -->
+  </acceptance_criteria>
+
+
+  <!-- ============================================================
+    SECTION: OPEN QUESTIONS
+    SCORE WEIGHT: [MEDIUM]   DEPTH: ENUMERATED
+    
+    List any decisions that are intentionally deferred or need human input.
+    Agents should NOT silently resolve open questions — log them here.
+    Include a proposed default the agent will use if no answer is given.
+  ============================================================ -->
+  <open_questions>
+    <!--
+      <question id="Q-001" blocking="true|false">
+        <description>What should happen if the Claude API key is invalid at startup?</description>
+        <options>
+          <option>Crash with clear error message</option>
+          <option>Start server but return 503 on all /api/claude/* routes</option>
+        </options>
+        <agent_default>Start server; return 503 with error detail on affected routes.</agent_default>
+      </question>
+    -->
+  </open_questions>
+
+
+  <!-- ============================================================
+    SECTION: OUT OF SCOPE / DEFERRED
+    SCORE WEIGHT: [LOW]   DEPTH: ENUMERATED
+    
+    Explicitly list features that will NOT be built in this version.
+    This prevents agents from gold-plating or guessing.
+    Reference fidelity="deferred" features here for completeness.
+  ============================================================ -->
+  <out_of_scope>
+    <!--
+      <item reason="deferred to v2">Multi-user auth and sessions</item>
+      <item reason="mock only">Voice input and transcription</item>
+      <item reason="not applicable">OAuth / SSO integration</item>
+    -->
+  </out_of_scope>
+
+</project_specification>
